@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .wrapper {
+            position: absolute;
+            margin: 0 auto;
+            width: 368px;
+            height: 640px;
+            left: 0;
+            right: 0;
+        }
+
+        .menu {
+            display: none;
+            position: absolute;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            height: 60px;
+            width: 100%;
+        }
+
+        .play {
+            position: absolute;
+            top: calc(50% - 15px);
+            left: 10px;
+            width: 50px;
+            height: 30px;
+            line-height: 30px;
+            color: white;
+            border: 1px solid white;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .time {
+            position: absolute;
+            color: white;
+            height: 60px;
+            width: 80px;
+            line-height: 60px;
+            margin-left: 70px;
+        }
+
+        .control-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 2px;
+            width: 100%;
+            background-color: gray;
+        }
+
+        .progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 2px;
+            width: 0px;
+            background-color: orange;
+        }
+
+        .control {
+            position: absolute;
+            left: 0px;
+            top: -2px;
+            display: block;
+            height: 6px;
+            width: 6px;
+            border-radius: 3px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .speed {
+            position: absolute;
+            top: calc(50% - 15px);
+            left: 150px;
+            width: 50px;
+            height: 30px;
+            line-height: 30px;
+            color: white;
+            border: 1px solid white;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        ul {
+            display: none;
+            position: absolute;
+            left: 150px;
+            top: -130px;
+            list-style: none;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* box-sizing: border-box; */
+            height: 114px;
+            width: 50px;
+            border-radius: 5px;
+        }
+
+        ul li {
+            width: 50px;
+            cursor: pointer;
+            height: 28.5px;
+            color: white;
+            /* border:1px solid white; */
+        }
+
+        ul li:hover {
+            color: orange;
+        }
+
+        .quite,
+        .loud {
+            position: absolute;
+            top: calc(50% - 15px);
+            left: 230px;
+            width: 20px;
+            height: 30px;
+            line-height: 30px;
+            color: white;
+            border: 1px solid white;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .quite {
+            left: 260px;
+        }
+
+        .full_screen {
+            position: absolute;
+            top: calc(50% - 15px);
+            right: 10px;
+            width: 40px;
+            height: 30px;
+            line-height: 30px;
+            color: white;
+            border: 1px solid white;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <video class="vedio-player" src="123.mp4" autoplay></video>
+        <div class="menu">
+            <div class="control-wrapper">
+                <div class="progress"></div>
+                <div class="control"></div>
+            </div>
+            <div class="play">播放</div>
+            <div class="time"></div>
+            <div class="speed">正常</div>
+            <div>
+                <ul class="speed-list">
+                    <li>正常</li>
+                    <li>x1.25</li>
+                    <li>x1.5</li>
+                    <li>x2</li>
+                </ul>
+            </div>
+            <div class="loud">+</div>
+            <div class="quite">-</div>
+            <div class="full_screen">全屏</div>
+        </div>
+    </div>
+    <script>
+        var wrapper = document.getElementsByClassName('wrapper')[0];
+        var vedioPlayer = document.getElementsByClassName('vedio-player')[0];
+        var menu = document.getElementsByClassName('menu')[0];
+        var play = document.getElementsByClassName('play')[0];
+        var time = document.getElementsByClassName('time')[0];
+        var controlWrapper = document.getElementsByClassName('control-wrapper')[0];
+        var ctrBar = controlWrapper.getElementsByClassName('control')[0];
+        var progress = document.getElementsByClassName('progress')[0];
+        var speedBtn = document.getElementsByClassName('speed')[0];
+        var speedList = document.getElementsByClassName('speed-list')[0];
+        var speed = speedList.getElementsByTagName('li');
+        var loudBtn = document.getElementsByClassName('loud')[0];
+        var quiteBtn = document.getElementsByClassName('quite')[0];
+        var fullScreen = document.getElementsByClassName('full_screen')[0];
+
+        controlWrapper.onmouseenter = function () {
+            this.style.height = '14px';
+            this.style.top = '-14px';
+            progress.style.height = '14px';
+            ctrBar.style.height = '18px';
+
+        }
+        controlWrapper.onmouseleave = function () {
+            this.style.height = '2px';
+            this.style.top = '-2px';
+            progress.style.height = '2px';
+            ctrBar.style.height = '6px';
+        }
+        vedioPlayer.onmouseenter = function () {
+            menu.style.display = 'block';
+            wrapper.onmouseleave = function () {
+                menu.style.display = 'none';
+            }
+        }
+        controlWrapper.onclick = function (e) {
+            var location = e.layerX;
+            var width = controlWrapper.clientWidth;
+            console.log(location, width, e)
+            var targetTime = location / width * vedioPlayer.duration;
+            vedioPlayer.currentTime = targetTime;
+        }
+        play.onclick = function () {
+            if (vedioPlayer.paused) {
+                vedioPlayer.play();
+                play.innerHTML = '暂停';
+            } else {
+                vedioPlayer.pause();
+                play.innerHTML = '播放';
+            }
+        }
+        speedBtn.onclick = function () {
+            speedList.style.display = 'block';
+        }
+        speedList.onmouseleave = function () {
+            this.style.display = 'none';
+        }
+        for (var i = 0; i < speed.length; i++) {
+            speed[i].index = i;
+            speed[i].onclick = function (e) {
+                if (this.index == 0) {
+                    vedioPlayer.playbackRate = 1;
+                    speedBtn.innerHTML = '正常';
+                } else if (this.index == 1) {
+                    vedioPlayer.playbackRate = 1.25;
+                    speedBtn.innerHTML = 'x1.25';
+                } else if (this.index == 2) {
+                    vedioPlayer.playbackRate = 1.5;
+                    speedBtn.innerHTML = 'x1.5';
+                } else if (this.index = 3) {
+                    vedioPlayer.playbackRate = 2;
+                    speedBtn.innerHTML = 'x2';
+                }
+            }
+        }
+        loudBtn.onclick = function () {
+            vedioPlayer.volume = vedioPlayer.volume + 0.1 >= 1 ? 1 : vedioPlayer.volume + 0.1;
+        }
+        quiteBtn.onclick = function () {
+            vedioPlayer.volume = vedioPlayer.volume - 0.1 <= 0 ? 0 : vedioPlayer.volume - 0.1;
+        }
+        fullScreen.onclick = function () {
+            var root = document.documentElement;
+            root.requestFullscreen();
+            wrapper.style.height = window.screen.height + 'px';
+            wrapper.style.width = window.screen.width + 'px';
+            vedioPlayer.style.height = window.screen.height + 'px';
+            vedioPlayer.style.height = window.screen.width;
+        }
+        var timer = setInterval(function () {
+            var total = vedioPlayer.duration;
+            var nowTime = vedioPlayer.currentTime;
+            time.innerHTML =
+                `${parseInt(nowTime / 60)}:${parseInt(nowTime % 60)}/${parseInt(total / 60)}:${parseInt(total % 60)}`;
+            var width = nowTime / total * vedioPlayer.clientWidth;
+            progress.style.width = width + 'px';
+            ctrBar.style.left = width + 'px';
+        }, 1000)
+    </script>
+</body>
+
+</html>
